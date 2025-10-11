@@ -8,7 +8,7 @@ class HeapTree:
 
         cur_i = len(self.heap) - 1
         parent_i = self.get_parent_index(cur_i)
-        while parent_i is not None and self.heap[parent_i] > value:
+        while parent_i is not None and self.heap[parent_i] < value:
             self.swap(cur_i, parent_i)
             cur_i, parent_i = parent_i, self.get_parent_index(parent_i)
             
@@ -24,12 +24,12 @@ class HeapTree:
     def swap(self, i, j):
         self.heap[i], self.heap[j] = self.heap[j], self.heap[i]
         
-    def extract_min(self):
-        min_num = self.heap[0]
+    def extract_max(self):
+        max_num = self.heap[0]
         del self.heap[0]
     
         if len(self.heap) == 0:
-            return min_num
+            return max_num
 
         self.heap.insert(0, self.heap[-1])
         del self.heap[-1]
@@ -37,34 +37,19 @@ class HeapTree:
         cur_i = 0
         while True:
             l, r = self.get_left_child_index(cur_i), self.get_right_child_index(cur_i)
-            smallest = cur_i
+            largest = cur_i
             size = len(self.heap)
 
-            if l < size and self.heap[l] < self.heap[smallest]:
-                smallest = l
+            if l < size and self.heap[l] > self.heap[largest]:
+                largest = l
 
-            if r < size and self.heap[r] < self.heap[smallest]:
-                smallest = r
+            if r < size and self.heap[r] > self.heap[largest]:
+                largest = r
 
-            if smallest == cur_i:
+            if largest == cur_i:
                 break
 
-            self.swap(smallest, cur_i)
-            cur_i = smallest
+            self.swap(largest, cur_i)
+            cur_i = largest
 
-        return min_num
-
-
-_ = input()
-tree = HeapTree()
-for num in map(int, input().split()):
-    tree.insert(num)
-
-summ = 0
-while len(tree.heap) > 1:
-    cur_summ = tree.extract_min() + tree.extract_min()
-    summ += cur_summ
-    tree.insert(cur_summ)
-
-print(summ)
-
+        return max_num
